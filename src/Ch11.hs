@@ -1,9 +1,13 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Ch11 where
+import Test.QuickCheck.All
 
 import Test.QuickCheck
 import Data.List
 import Control.Monad
 import Prelude hiding ((<>))
+import Test.QuickCheck.All
 
 -------------------------------------------------------------------------
 -- um pequeno exemplo para experimentar a geração de dados randomicos
@@ -60,6 +64,21 @@ double d = text (show d)
 
 line :: Doc
 line = Line
+
+
+fold :: (Doc -> Doc -> Doc) -> [Doc] -> Doc
+fold f = foldr f empty
+
+hcat :: [Doc] -> Doc
+hcat = fold (<>)
+
+
+punctuate :: Doc -> [Doc] -> [Doc]
+punctuate p []     = []
+punctuate p [d]    = [d]
+punctuate p (d:ds) = (d <> p) : punctuate p ds
+
+
 {-
 
 -- versão mais direta
@@ -108,3 +127,27 @@ prop_char c   = char c   == Char c
 prop_text s   = text s   == if null s then Empty else Text s
 prop_line     = line     == Line
 prop_double d = double d == text (show d)
+
+prop_hcat xs = hcat xs == glue xs
+    where
+        glue []     = empty
+        glue (d:ds) = d <> glue ds
+
+
+-- fail        
+--prop_punctuate s xs = punctuate s xs == intersperse s xs        
+
+
+prop_punctuate' s xs = punctuate s xs == combine (intersperse s xs)
+    where
+        combine []           = []
+        combine [x]          = [x]
+
+        combine (x:Empty:ys) = x : combine ys
+        combine (Empty:y:ys) = y : combine ys
+        combine (x:y:ys)     = x `Concat` y : combine ys
+
+
+
+return []
+runTests = $quickCheckAll
