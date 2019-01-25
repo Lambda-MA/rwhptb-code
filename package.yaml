@@ -24,8 +24,9 @@ dependencies:
 - QuickCheck
 
 library:
-  source-dirs: src
-
+  source-dirs: 
+  - src
+  
 executables:
   rwhptbr-exe:
     main:                Main.hs
