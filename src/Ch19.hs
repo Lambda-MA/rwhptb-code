@@ -37,3 +37,21 @@ eDivBy numerator (denom:xs) =
     case eDivBy numerator xs of
       Left x -> Left x
       Right results -> Right ((numerator `div` denom) : results)
+
+--- tipos de dados para identificar os erros
+
+data DivByError a = DivBy0
+                 | ForbiddenDenominator a
+                   deriving (Eq, Read, Show)
+
+eDivBy' :: Integral a => a -> [a] -> Either (DivByError a) [a]
+eDivBy' _ [] = Right []
+eDivBy' _ (0:_) = Left DivBy0
+eDivBy' _ (10:_) = Left (ForbiddenDenominator 10)
+eDivBy' _ (20:_) = Left (ForbiddenDenominator 20)
+eDivBy' numerator (denom:xs) =
+    case eDivBy' numerator xs of
+      Left x -> Left x
+      Right results -> Right ((numerator `div` denom) : results)
+
+-- https://www.schoolofhaskell.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling
