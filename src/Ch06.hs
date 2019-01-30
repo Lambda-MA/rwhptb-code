@@ -1,4 +1,9 @@
+{-# LANGUAGE FlexibleInstances #-}
+
+
 module Ch06 where
+
+import Data.List
 
 -- arquivo: src/Ch06.hs
 data Color = Red | Green | Blue
@@ -85,3 +90,33 @@ instance Show OK where
 
 data ThisWorks = ThisWorks OK
                  deriving (Show)
+
+class Borked a where
+    bork :: a -> String
+
+instance Borked Int where
+    bork = show
+
+instance Borked (Int, Int) where
+    bork (a, b) = bork a ++ ", " ++ bork b
+
+instance (Borked a, Borked b) => Borked (a, b) where
+    bork (a, b) = ">>" ++ bork a ++ " " ++ bork b ++ "<<"
+
+class Foo a where
+    foo :: a -> String
+
+instance {-# OVERLAPS #-} Foo a => Foo [a] where
+    foo = concat . intersperse ", " . map foo
+
+instance Foo Char where
+    foo c = [c]
+
+instance Foo String where
+    foo = id
+
+data DataInt = D Int
+    deriving (Eq, Ord, Show)
+
+newtype NewtypeInt = N Int
+    deriving (Eq, Ord, Show)
