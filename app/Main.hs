@@ -4,5 +4,7 @@ module Main where
 
 
 
-main :: IO ()
-main = print 10
+main = do
+    contents <- getContents
+    print (sumFile contents)
+  where sumFile = sum . map read . words
