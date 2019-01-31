@@ -24,6 +24,7 @@ dependencies:
 - QuickCheck
 - mtl
 - bytestring
+- regex-posix
 
 library:
   source-dirs: 

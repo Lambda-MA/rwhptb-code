@@ -1,3 +1,5 @@
+
+{-# LANGUAGE FlexibleContexts #-}
 module Ch08 where
 
 import qualified Data.ByteString.Lazy as L
